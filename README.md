@@ -58,7 +58,7 @@ The system enables **real-time collaborative document editing** using **Cassandr
 
 ## Data Flow
 
-## Synchronization and Conflict Resolution
+# Synchronization and Conflict Resolution
 
 ### Synchronization Protocol
 For real-time collaboration, **WebSocket** is chosen as the synchronization protocol.
@@ -69,8 +69,12 @@ For real-time collaboration, **WebSocket** is chosen as the synchronization prot
 | **Server-Sent Events (SSE)** | Partially suitable | Supports one-way communication (server → client) but not ideal for bidirectional edits. |
 | **WebSocket** |  Best choice | Enables full-duplex communication, allowing instant edit synchronization across users. |
 
+---
+
 A **dedicated WebSocket Service** handles all real-time connections. It operates independently from the **Document Service** to keep the core system stateless and scalable.  
 A **Message Queue (Kafka / Redis Streams)** sits between these two services to decouple ingestion from persistence, ensuring durability and resilience.
+
+---
 
 ### Real-Time Edit Flow
 1. **Client → WebSocket Service:**  
