@@ -58,6 +58,73 @@ The system enables **real-time collaborative document editing** using **Cassandr
 
 ## Data Flow
 
+## Synchronization and Conflict Resolution
+
+### Synchronization Protocol
+For real-time collaboration, **WebSocket** is chosen as the synchronization protocol.
+
+| Protocol | Suitability | Notes |
+|-----------|--------------|-------|
+| **HTTP Polling** |  Not suitable | Causes high latency and server overhead due to constant polling. |
+| **Server-Sent Events (SSE)** | Partially suitable | Supports one-way communication (server → client) but not ideal for bidirectional edits. |
+| **WebSocket** |  Best choice | Enables full-duplex communication, allowing instant edit synchronization across users. |
+
+A **dedicated WebSocket Service** handles all real-time connections. It operates independently from the **Document Service** to keep the core system stateless and scalable.  
+A **Message Queue (Kafka / Redis Streams)** sits between these two services to decouple ingestion from persistence, ensuring durability and resilience.
+
+### Real-Time Edit Flow
+1. **Client → WebSocket Service:**  
+   The client sends an edit operation (insert, delete, update) over the WebSocket connection.  
+   Only the *delta* (change) is sent — not the entire document — to save bandwidth.  
+
+2. **WebSocket → Message Queue:**  
+   The WebSocket service publishes the operation into a message queue for asynchronous processing.
+
+3. **Message Queue → Document Service:**  
+   The Document Service consumes the message, applies validation and conflict resolution logic, and persists the change.
+
+4. **Document Service → WebSocket:**  
+   Once the operation is saved, the Document Service pushes the confirmed update (or merged result) back to the WebSocket layer.
+
+5. **WebSocket → All Clients:**  
+   The WebSocket Service broadcasts the update to all connected clients of that document, maintaining real-time consistency.
+
+---
+
+### Conflict Resolution Strategies
+
+#### 1. Last-Write-Wins (LWW)
+Each operation is timestamped.  
+If multiple edits conflict, the one with the most recent timestamp prevails.
+
+**Pros:**
+- Simple and fast to implement  
+- Low overhead  
+
+**Cons:**
+- Risk of overwriting concurrent user changes  
+
+---
+
+#### 2. Operational Transformation (OT)
+Used for advanced real-time editing (like Google Docs).  
+Instead of discarding edits, **OT transforms** conflicting operations so that all user intents are preserved.
+
+**Example:**
+- User A inserts `" beautiful"` at position 6.  
+- User B inserts `" amazing"` at position 6.  
+- OT shifts B’s edit to position 16, resulting in → `"Hello beautiful amazing World"`  
+
+**Pros:**
+- Preserves all user intents  
+- Ensures consistency across all clients  
+
+**Cons:**
+- More complex to implement  
+- Can become computationally expensive with many concurrent edits  
+
+---
+
 1. **User Edit:** The client sends an edit operation (e.g., insert/delete text) through WebSocket.  
 2. **WebSocket Gateway:** Forwards the edit into a **message queue** for async processing.  
 3. **Document Service:**  
