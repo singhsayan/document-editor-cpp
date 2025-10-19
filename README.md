@@ -11,7 +11,7 @@ The system supports:
 - Rendering and saving documents to persistent storage (file or database)
 
 ---
-# High-Level Design (HLD) — C++ Document Editor System
+# High-Level Design (HLD)
 
 ## Overview
 The **High-Level Design (HLD)** of the **C++ Document Editor System** describes the system’s major components, data flow, and architectural decisions.  
