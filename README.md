@@ -128,7 +128,7 @@ It highlights class responsibilities, relationships, and the design patterns use
 
 ---
 
-### 🧩 Design Principles Followed
+### Design Principles Followed
 - **Single Responsibility Principle (SRP):** Each class has a single, clear purpose.  
 - **Open/Closed Principle (OCP):** New element or storage types can be added without modifying existing code.  
 - **Dependency Inversion Principle (DIP):** The editor depends on abstractions (`Persistence`), not concrete implementations.  
