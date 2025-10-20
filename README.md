@@ -19,6 +19,11 @@ The system enables **real-time collaborative document editing** using **Cassandr
 
 ---
 
+###  HLD Diagram
+![High-Level Design Diagram](./screenshots/hld.svg)
+
+---
+
 ## Functional Requirements
 
 | Type | Requirement |
@@ -168,10 +173,6 @@ CREATE TABLE documents (
 
 
 ---
-###  HLD Diagram
-![High-Level Design Diagram](./screenshots/hld.svg)
-
----
 
 ##  Low-Level Design (LLD)
 
@@ -180,6 +181,11 @@ The **Low-Level Design (LLD)** focuses on how the internal components of the doc
 It highlights class responsibilities, relationships, and the design patterns used to achieve modularity and extensibility.
 
 ---
+
+### UML Class Diagram
+![Class Diagram](./screenshots/class_diagram.svg)
+
+--- 
 
 ### Core Classes and Responsibilities
 
@@ -204,9 +210,3 @@ It highlights class responsibilities, relationships, and the design patterns use
 - **Open/Closed Principle (OCP):** New element or storage types can be added without modifying existing code.  
 - **Dependency Inversion Principle (DIP):** The editor depends on abstractions (`Persistence`), not concrete implementations.  
 - **Interface Segregation:** Each class only exposes necessary methods relevant to its purpose.  
-
----
-
-
-### UML Class Diagram
-![Class Diagram](./screenshots/class_diagram.svg)
